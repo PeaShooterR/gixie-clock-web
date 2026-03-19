@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Gixie Clock WebApp</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="app-bg"></div>
+  <main class="app-shell">
+    <section id="login-screen" class="screen active">
+      <div class="hero-card card">
+        <div class="hero-copy">
+          <h1 id="login-title">Select Device</h1>
+          <p id="login-subtitle">Connect to your Gixie Clock on the local network</p>
+        </div>
+      </div>
+
+      <div class="card form-card">
+        <div class="row two-col">
+          <label class="field">
+            <span>IP</span>
+            <input id="manual-ip" type="text" placeholder="192.168.1.100" autocomplete="off">
+          </label>
+          <label class="field small">
+            <span>Port</span>
+            <input id="manual-port" type="number" min="1" max="65535" value="81">
+          </label>
+        </div>
+
+        <div class="device-lists">
+          <div>
+            <h3 id="history-title">History</h3>
+            <ul id="history-list" class="device-list"></ul>
+          </div>
+        </div>
+
+        <div class="row actions">
+          <button id="connect-btn" class="btn btn-primary">Connect</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="main-screen" class="screen">
+      <header class="topbar card">
+        <div class="brand">
+          <img src="./static/logo.png" alt="Gixie" class="brand-logo">
+          <div>
+            <h2>Gixie Clock</h2>
+            <p id="device-label">Disconnected</p>
+          </div>
+        </div>
+      </header>
+
+      <section id="tab-light" class="tab-pane active">
+        <div class="card">
+          <h3>Light</h3>
+          <div class="row two-col">
+            <label class="field small">
+              <span>Tubes</span>
+              <input id="glass-num" type="number" value="8" readonly>
+            </label>
+            <label class="field">
+              <span>Mode</span>
+              <select id="display-mode"></select>
+            </label>
+          </div>
+
+          <div id="glass-grid" class="glass-grid"></div>
+
+          <div class="row two-col">
+            <label class="field">
+              <span>Color</span>
+              <input id="color-picker" type="color" value="#e25829">
+            </label>
+            <button id="set-white-btn" class="btn btn-secondary">Set White</button>
+          </div>
+
+          <div class="row two-col brightness-row">
+            <label class="field">
+              <span>Brightness</span>
+              <input id="brightness" type="range" min="1" max="100" value="10">
+            </label>
+            <label class="field small">
+              <span>Level</span>
+              <input id="brightness-input" type="number" min="1" max="100" value="10">
+            </label>
+          </div>
+
+          <div class="switch-row">
+            <label class="check-label"><input id="display-status" type="checkbox"> Power ON/OFF</label>
+            <label class="check-label"><input id="whole-hour" type="checkbox"> 24-Hour</label>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-alarm" class="tab-pane">
+        <div class="card">
+          <h3>Alarm</h3>
+          <div id="alarm-list" class="alarm-list"></div>
+        </div>
+      </section>
+
+      <section id="tab-timer" class="tab-pane">
+        <div class="card timer-card">
+          <div class="timer-head">
+            <h3>Timer</h3>
+            <p>Set a countdown and control it live</p>
+          </div>
+          <div class="timer-inputs">
+            <label class="field timer-field"><span>Hours</span><input id="timer-h" type="number" min="0" max="24" value="0"></label>
+            <label class="field timer-field"><span>Minutes</span><input id="timer-m" type="number" min="0" max="59" value="1"></label>
+            <label class="field timer-field"><span>Seconds</span><input id="timer-s" type="number" min="0" max="59" value="0"></label>
+          </div>
+          <div class="timer-face">
+            <div id="timer-text" class="timer-text">00:01:00</div>
+            <div class="progress-wrap"><div id="timer-progress"></div></div>
+          </div>
+          <div class="timer-actions">
+            <button id="timer-start" class="btn btn-primary">Start</button>
+            <button id="timer-suspend" class="btn btn-secondary">Pause/Resume</button>
+            <button id="timer-stop" class="btn btn-danger">Stop</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-setting" class="tab-pane">
+        <div class="card">
+          <h3>Settings</h3>
+          <details class="panel" open>
+            <summary>Timezone</summary>
+            <div class="panel-grid">
+              <label class="field">
+                <span>Select timezone</span>
+                <select id="timezone"></select>
+              </label>
+            </div>
+          </details>
+
+          <details class="panel">
+            <summary>Time Display</summary>
+            <div class="panel-grid">
+              <label class="check-label"><input id="tdm0" type="checkbox"> H:M:S</label>
+              <label class="check-label"><input id="tdm1" type="checkbox"> Y-M-D</label>
+              <label class="check-label"><input id="tdm2" type="checkbox"> M-D H:M</label>
+              <label>Change Interval
+                <select id="tdm-interval">
+                  <option value="0">None</option>
+                  <option value="1">1 minute</option>
+                  <option value="2">2 minutes</option>
+                  <option value="5">5 minutes</option>
+                </select>
+              </label>
+              <button id="save-tdm" class="btn btn-secondary">Save</button>
+            </div>
+          </details>
+
+          <details class="panel">
+            <summary>NTP Server</summary>
+            <div class="panel-grid">
+              <label class="field">
+                <span>Select server</span>
+                <select id="ntp-server"></select>
+              </label>
+            </div>
+          </details>
+
+          <details class="panel">
+            <summary>Custom Number</summary>
+            <div id="worldline-grid" class="worldline-grid"></div>
+            <button id="save-worldline" class="btn btn-secondary">Save Worldline</button>
+          </details>
+
+          <details class="panel">
+            <summary>Auto Sleep</summary>
+            <div class="panel-grid">
+              <label class="check-label"><input id="auto-sleep-switch" type="checkbox"> Enabled</label>
+              <label>Sleep Time <input id="auto-sleep-time" type="time" value="23:00"></label>
+              <label>Wake Time <input id="auto-open-time" type="time" value="08:00"></label>
+              <button id="save-auto-sleep" class="btn btn-secondary">Save Auto Sleep</button>
+            </div>
+          </details>
+
+          <details class="panel">
+            <summary>Custom Fans</summary>
+            <div class="panel-grid">
+              <label>Mode
+                <select id="fans-mode">
+                  <option value="0">Disabled</option>
+                  <option value="1">Bilibili</option>
+                  <option value="2">YouTube</option>
+                  <option value="3">Instagram</option>
+                  <option value="4">Twitter</option>
+                </select>
+              </label>
+              <label>Bilibili UID <input id="fans-bili" type="text"></label>
+              <label>YouTube Channel <input id="fans-yt-channel" type="text"></label>
+              <label>YouTube Key <input id="fans-yt-key" type="text"></label>
+              <label>Instagram <input id="fans-ins" type="text"></label>
+              <button id="save-fans" class="btn btn-secondary">Save Fans Settings</button>
+            </div>
+          </details>
+
+          <div class="row actions">
+            <button id="clear-cache" class="btn btn-danger">Clear Cache</button>
+          </div>
+
+        </div>
+      </section>
+
+      <nav class="tabbar card">
+        <button class="tab-btn active" data-tab="light"><img src="./static/tabs/led.png" alt="light"><span>Light</span></button>
+        <button class="tab-btn" data-tab="alarm"><img src="./static/tabs/alarm.png" alt="alarm"><span>Alarm</span></button>
+        <button class="tab-btn" data-tab="timer"><img src="./static/tabs/timer.png" alt="timer"><span>Timer</span></button>
+        <button class="tab-btn" data-tab="setting"><img src="./static/tabs/setting.png" alt="setting"><span>Settings</span></button>
+      </nav>
+    </section>
+  </main>
+
+  <div id="toast" class="toast"></div>
+  <script src="./app.js"></script>
+</body>
+</html>
